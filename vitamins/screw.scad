@@ -85,13 +85,30 @@ module screw(type, length, hob_point = 0, nylon = false) { //! Draw specified sc
     colour = nylon || head_type == hs_grub ? grey(40) : grey(80);
 
     module shaft(socket = 0, headless = false) {
-        point = screw_nut(type) ? 0 : 3 * rad;
+        point = screw_nut(type) ? 0 :  1.5*rad;
         shank  = length - thread - socket;
 
         if(show_threads && !point && pitch)
             translate_z(-length)
                 male_metric_thread(d, pitch, thread - (shank > 0 || headless ? 0 : socket), false, top = headless ? -1 : 0, solid = !headless, colour = colour);
-        else
+        if(show_threads && pitch){
+            prof = thread_profile(1.2*pitch,pitch/10,40);
+            color(colour * 0.9){
+                render(6){
+                    intersection(){
+                        translate_z(-length)
+                            thread(d-2.4*pitch, 2*pitch, length, prof, center=false, bot=0, top=0 );
+                        rotate_extrude() {
+                            translate([0, -length + point])
+                                square([rad, length - socket - point]);
+                            polygon([
+                                [0, -length], [0, point - length], [rad, point - length]
+                            ]);
+                        }
+                    }
+                }
+            }
+        } else
             color(colour * 0.9)
                 rotate_extrude() {
                     translate([0, -length + point])
@@ -99,7 +116,7 @@ module screw(type, length, hob_point = 0, nylon = false) { //! Draw specified sc
 
                     if(point)
                         polygon([
-                            [0.4, -length], [0, point - length], [rad, point - length]
+                            [0, -length], [0, point - length], [rad, point - length]
                         ]);
                 }
 
