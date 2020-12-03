@@ -91,7 +91,7 @@ module screw(type, length, hob_point = 0, nylon = false) { //! Draw specified sc
         if(show_threads && !point && pitch)
             translate_z(-length)
                 male_metric_thread(d, pitch, thread - (shank > 0 || headless ? 0 : socket), false, top = headless ? -1 : 0, solid = !headless, colour = colour);
-        if(show_threads && pitch){
+        else if(show_threads && pitch){
             prof = thread_profile(1.2*pitch,pitch/10,40);
             color(colour * 0.9){
                 render(6){
